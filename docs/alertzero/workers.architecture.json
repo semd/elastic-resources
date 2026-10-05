@@ -1,0 +1,288 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AlertZero worker relationships",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/semd/kibana",
+      "revision": "db9c5ee546f896227a99ce3a1c82ea243b06d363"
+    },
+    "legend": {
+      "entries": {
+        "external": {
+          "label": "Source data"
+        },
+        "backend": {
+          "label": "Worker"
+        },
+        "database": {
+          "label": "Stored handoff"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "batch",
+      "label": "Security alert batch",
+      "type": "external",
+      "sublabel": "Detection rule execution",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "triage",
+      "label": "Alert Triage",
+      "type": "backend",
+      "sublabel": "Trigger: alert event",
+      "pos": [
+        390,
+        40
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/floor_alert_triage.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    },
+    {
+      "id": "closures",
+      "label": "False-positive closures",
+      "type": "database",
+      "sublabel": "Also supplied by analysts",
+      "pos": [
+        740,
+        40
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "tuning",
+      "label": "Rule Tuning",
+      "type": "backend",
+      "sublabel": "Trigger: schedule / manual",
+      "pos": [
+        1090,
+        40
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/detection_rule_tuning.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    },
+    {
+      "id": "pool",
+      "label": "Security alert pool",
+      "type": "external",
+      "sublabel": "Open / acknowledged alerts",
+      "pos": [
+        40,
+        230
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "discovery",
+      "label": "Attack Discovery",
+      "type": "backend",
+      "sublabel": "Trigger: schedule",
+      "pos": [
+        390,
+        230
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/floor_attack_discovery.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    },
+    {
+      "id": "requests",
+      "label": "Forensic requests",
+      "type": "database",
+      "sublabel": "security.analyze_endpoint",
+      "pos": [
+        740,
+        230
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "forensics",
+      "label": "Forensics",
+      "type": "backend",
+      "sublabel": "Trigger: 1-minute poll / manual",
+      "pos": [
+        1090,
+        230
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/forensics_endpoint_analysis.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    },
+    {
+      "id": "reports",
+      "label": "Threat reports + telemetry",
+      "type": "external",
+      "sublabel": "Indicators, techniques, report text",
+      "pos": [
+        40,
+        420
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "hunt",
+      "label": "Continuous Threat Hunt",
+      "type": "backend",
+      "sublabel": "Manual / schedule by autonomy",
+      "pos": [
+        390,
+        420
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/hunt_continuous_threat_hunt.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    },
+    {
+      "id": "subjects",
+      "label": "Coverage review subjects",
+      "type": "database",
+      "sublabel": "security.coverage",
+      "pos": [
+        740,
+        420
+      ],
+      "size": [
+        240,
+        90
+      ]
+    },
+    {
+      "id": "coverage",
+      "label": "Rule Coverage",
+      "type": "backend",
+      "sublabel": "Trigger: schedule / manual",
+      "pos": [
+        1090,
+        420
+      ],
+      "size": [
+        240,
+        90
+      ],
+      "sources": [
+        {
+          "path": "src/platform/packages/shared/kbn-workflows/managed/definitions/alertzero/detection_rule_coverage.yaml",
+          "label": "Workflow definition"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "batch-triage",
+      "from": "batch",
+      "to": "triage",
+      "label": "classify"
+    },
+    {
+      "id": "triage-closures",
+      "from": "triage",
+      "to": "closures",
+      "label": "approved closure"
+    },
+    {
+      "id": "closures-tuning",
+      "from": "closures",
+      "to": "tuning",
+      "label": "read on sweep"
+    },
+    {
+      "id": "pool-discovery",
+      "from": "pool",
+      "to": "discovery",
+      "label": "correlate"
+    },
+    {
+      "id": "discovery-requests",
+      "from": "discovery",
+      "to": "requests",
+      "label": "approved handoff"
+    },
+    {
+      "id": "requests-forensics",
+      "from": "requests",
+      "to": "forensics",
+      "label": "read on poll"
+    },
+    {
+      "id": "reports-hunt",
+      "from": "reports",
+      "to": "hunt",
+      "label": "hunt"
+    },
+    {
+      "id": "hunt-subjects",
+      "from": "hunt",
+      "to": "subjects",
+      "label": "write subjects"
+    },
+    {
+      "id": "subjects-coverage",
+      "from": "subjects",
+      "to": "coverage",
+      "label": "read on sweep"
+    }
+  ]
+}

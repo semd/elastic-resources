@@ -1,0 +1,368 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AlertZero data flow and feedback",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "legend": {
+      "entries": {
+        "backend": {
+          "label": "Worker"
+        },
+        "database": {
+          "label": "Data / configuration"
+        },
+        "external": {
+          "label": "Human input"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "reports",
+      "label": "Threat intelligence reports",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": ""
+    },
+    {
+      "id": "hunt",
+      "label": "5. Continuous Threat Hunt",
+      "pos": [
+        370,
+        40
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    },
+    {
+      "id": "subjects",
+      "label": "Pending coverage subjects",
+      "pos": [
+        700,
+        40
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": "security.coverage"
+    },
+    {
+      "id": "coverage",
+      "label": "4. Rule Coverage",
+      "pos": [
+        1030,
+        40
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    },
+    {
+      "id": "rules",
+      "label": "Detection rules",
+      "pos": [
+        700,
+        240
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": ""
+    },
+    {
+      "id": "alerts",
+      "label": "Security alerts",
+      "pos": [
+        700,
+        440
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": ""
+    },
+    {
+      "id": "triage",
+      "label": "1. Alert Triage",
+      "pos": [
+        1030,
+        440
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    },
+    {
+      "id": "telemetry",
+      "label": "Environment telemetry",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": ""
+    },
+    {
+      "id": "analyst",
+      "label": "Analyst decisions",
+      "pos": [
+        700,
+        640
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "external",
+      "sublabel": ""
+    },
+    {
+      "id": "fp",
+      "label": "Closed false-positive alerts",
+      "pos": [
+        1030,
+        640
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": ""
+    },
+    {
+      "id": "tuning",
+      "label": "3. Rule Tuning",
+      "pos": [
+        1030,
+        240
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    },
+    {
+      "id": "discovery",
+      "label": "2. Attack Discovery",
+      "pos": [
+        370,
+        440
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    },
+    {
+      "id": "requests",
+      "label": "Pending forensic requests",
+      "pos": [
+        370,
+        640
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "database",
+      "sublabel": "security.analyze_endpoint"
+    },
+    {
+      "id": "forensics",
+      "label": "6. Forensics",
+      "pos": [
+        40,
+        640
+      ],
+      "size": [
+        220,
+        70
+      ],
+      "type": "backend",
+      "sublabel": ""
+    }
+  ],
+  "connections": [
+    {
+      "id": "rules-alerts",
+      "from": "rules",
+      "to": "alerts",
+      "label": "produce",
+      "variant": "default",
+      "labelAt": [
+        810,
+        365
+      ]
+    },
+    {
+      "id": "alerts-triage",
+      "from": "alerts",
+      "to": "triage",
+      "label": "alert batch",
+      "variant": "default"
+    },
+    {
+      "id": "triage-fp",
+      "from": "triage",
+      "to": "fp",
+      "label": "Approved / auto-approved closure",
+      "variant": "default",
+      "labelAt": [
+        1140,
+        575
+      ]
+    },
+    {
+      "id": "analyst-fp",
+      "from": "analyst",
+      "to": "fp",
+      "label": "close as false positive",
+      "variant": "default",
+      "labelAt": [
+        975,
+        625
+      ]
+    },
+    {
+      "id": "fp-tuning",
+      "from": "fp",
+      "to": "tuning",
+      "label": "closed alerts",
+      "variant": "default",
+      "fromSide": "right",
+      "toSide": "right",
+      "labelAt": [
+        1240,
+        385
+      ]
+    },
+    {
+      "id": "rules-tuning",
+      "from": "rules",
+      "to": "tuning",
+      "label": "Current rule definition",
+      "variant": "default",
+      "labelDy": -48
+    },
+    {
+      "id": "tuning-rules",
+      "from": "tuning",
+      "to": "rules",
+      "label": "Approved tuning changes",
+      "variant": "dashed",
+      "labelDy": 52
+    },
+    {
+      "id": "alerts-discovery",
+      "from": "alerts",
+      "to": "discovery",
+      "label": "Open / acknowledged alerts",
+      "variant": "default",
+      "labelAt": [
+        645,
+        425
+      ]
+    },
+    {
+      "id": "discovery-requests",
+      "from": "discovery",
+      "to": "requests",
+      "label": "Approved forensic handoff",
+      "variant": "default",
+      "labelAt": [
+        480,
+        575
+      ]
+    },
+    {
+      "id": "requests-forensics",
+      "from": "requests",
+      "to": "forensics",
+      "label": "pending requests",
+      "variant": "default"
+    },
+    {
+      "id": "reports-hunt",
+      "from": "reports",
+      "to": "hunt",
+      "label": "report context",
+      "variant": "default"
+    },
+    {
+      "id": "telemetry-hunt",
+      "from": "telemetry",
+      "to": "hunt",
+      "label": "telemetry",
+      "variant": "default"
+    },
+    {
+      "id": "telemetry-forensics",
+      "from": "telemetry",
+      "to": "forensics",
+      "label": "telemetry",
+      "variant": "default",
+      "labelAt": [
+        150,
+        475
+      ]
+    },
+    {
+      "id": "hunt-subjects",
+      "from": "hunt",
+      "to": "subjects",
+      "label": "coverage subjects",
+      "variant": "default"
+    },
+    {
+      "id": "subjects-coverage",
+      "from": "subjects",
+      "to": "coverage",
+      "label": "pending subjects",
+      "variant": "default"
+    },
+    {
+      "id": "coverage-rules",
+      "from": "coverage",
+      "to": "rules",
+      "label": "Approved enable / install / create",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}
